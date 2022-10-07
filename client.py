@@ -2,57 +2,65 @@ import numbers
 
 def isValid(inStr):
     hasOp = False
-    i=0
-    while i < len(inStr):
-        if inStr[i] == '+' or inStr[i] == '-':
+    i=1
+    
+    # must begin with number
+    if inStr[0].isnumeric() == False:
+            return False
+        
+    while i < len(inStr)-1:
+        if inStr[i] == '+' or inStr[i] == '-' or inStr[i] == '*' or inStr[i] == '/':
             if hasOp:
                 return False
             else:
                 hasOp = True
-                return True
-
+                i += 1
+                continue
         # check for valid numbers
         if inStr[i].isnumeric() == False:
             return False
+        # increment loop
         i += 1
-    if inStr[len(inStr)-1] != '=' or hasOp == False:
+
+    # must end in '='
+    if inStr[len(inStr)-1] != '=':
         return False
+
+    # invalid if missing operator
+    if hasOp == False:
+        return False
+
     # check if expression has no second term (ex: 1+=)
     if inStr[len(inStr)-2] == '+' or inStr[len(inStr)-2] == '-' or inStr[len(inStr)-2] == '*' or inStr[len(inStr)-2] == '/':
         return False
-
-def execute(inStr):
-    i = 0
-    pt1 = ""
-    pt2 = ""
-    while inStr[i] != '+' and inStr[i] != '-' and inStr[i] != '*' and inStr[i] != '/':
-        pt1 += inStr[i]
-        i += 1
-
-    term1 = float(pt1)
-    op = inStr[i]
-
-    while inStr[i] != '=':
-        pt2 += inStr[i];
-        i += 1
-
-    term2 = float(pt2)
-
-    if op == '+':
-        return term1 + term2
-    elif op == '-':
-        return term1 - term2
-    elif op == '*':
-        return term1 * term2
-    elif op == '/0/0':
-        return term1 / term2
+    
+    # all conditions met
+    return True
 
 # main function
-expression = input("Enter an expression: ")
+
+from socket import *
+serverName = "localhost"
+serverPort = 5408
+
+expression = ""
 while expression != "0/0=":
-    if isValid(expression):
-        print("Result from server:")
-        print(execute(expression))
+    expression = input("Enter an expression: ")
+    # check clientside if expression meets requirements
+    if isValid(expression) == True:
+        # create socket and establish TCP connection only if expression is valid
+        clientSocket = socket(AF_INET, SOCK_STREAM)
+        clientSocket.connect((serverName,serverPort))
+        # send input to server
+        clientSocket.send(expression.encode())
+        # get result from server
+        result = clientSocket.recv(1024)
+        print (result.decode())
+        # close socket
+        clientSocket.close()
     else:
         print("Input error. Re-type the math question again.")
-    expression = input("Enter an expression: ")
+
+
+
+
