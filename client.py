@@ -1,14 +1,19 @@
+# Owen Campbell
+# CNT 4704 Alghamdi
 import numbers
 
 def isValid(inStr):
     hasOp = False
     i=1
-    
+
     # must begin with number
     if inStr[0].isnumeric() == False:
             return False
         
     while i < len(inStr)-1:
+        if inStr[i] == ' ':
+            continue
+
         if inStr[i] == '+' or inStr[i] == '-' or inStr[i] == '*' or inStr[i] == '/':
             if hasOp:
                 return False
@@ -39,8 +44,10 @@ def isValid(inStr):
 
 # main function
 
+#portions of socket code adapted from client_tcp.py on Webcourses
 from socket import *
-serverName = "localhost"
+
+serverName = "eustis3.eecs.ucf.edu"
 serverPort = 5408
 
 expression = ""
@@ -51,6 +58,12 @@ while expression != "0/0=":
         # create socket and establish TCP connection only if expression is valid
         clientSocket = socket(AF_INET, SOCK_STREAM)
         clientSocket.connect((serverName,serverPort))
+
+        # get server ip address
+        hostname = gethostname()
+        ip = gethostbyname(hostname)
+        print("Connected with server on:", ip)
+
         # send input to server
         clientSocket.send(expression.encode())
         # get result from server
@@ -60,7 +73,3 @@ while expression != "0/0=":
         clientSocket.close()
     else:
         print("Input error. Re-type the math question again.")
-
-
-
-

@@ -1,3 +1,5 @@
+# Owen Campbell
+# CNT 4704 Alghamdi
 from socket import *
 
 def execute(inStr):
@@ -27,6 +29,7 @@ def execute(inStr):
     elif op == '/':
         return term1 / term2
 
+# portions adapted from server_tcp.py on Webcourses
 # Create a TCP server socket
 # (AF_INET is used for IPv4 protocols)
 # (SOCK_STREAM is used for TCP)
@@ -42,6 +45,11 @@ print ('The server is ready to receive')
 while True:
     # Set up a new connection from the client
     connectionSocket, addr = serverSocket.accept()
+
+    # get client ip address
+    hostname = gethostname()
+    ip = gethostbyname(hostname)
+    print("Connected with client on:", ip)
     
     # Receives the request sentence from the client
     expression = connectionSocket.recv(1024).decode()
